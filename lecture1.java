@@ -1,6 +1,10 @@
-\import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.Collections;
-
+import java.util.Comparator;
+/*
+Author: Matthew John Werner
+Spectre.ZERO.ONE Studios LLC
+ */
 
 public class Controller {
      public static void main(String[] args){
@@ -19,12 +23,31 @@ public class Controller {
 
            */
           ArrayList<Food> foodMenu = buildMenu(names, values, calories);
-
-
+          testGreedy(foodMenu, 1000.0f);
      }
 
-     public static FoodSet greedy() {
-          return null;
+     public static void testGreedy(ArrayList<Food> items, float constraints){
+          FoodSet set = greedy(items, constraints);
+          System.out.println("Total Value of all items = "+ set.getTotalValue ());
+          for(Food takenItem : set.getFood ()) {
+               System.out.println("Item : " + takenItem.toString());
+          }
+     }
+
+     public static FoodSet greedy(ArrayList<Food>  foodMenu, float maxCost) {
+          ArrayList<Food> result = new ArrayList<>();
+          Collections.sort ( foodMenu , ( Comparator< Food > ) ( o1 , o2 ) ->
+                    ((Food)o1).getName().compareToIgnoreCase ( ((Food)o2).getName()) );
+          float totalValue = 0.0f;
+          float totalCost = 0.0f;
+          for(Food element : foodMenu){
+               if((totalCost + (float)element.getCalories ()) <= maxCost){
+                    result.add(element);
+                    totalValue += element.getValue();
+                    totalCost += element.getCalories ();
+               }
+          }
+          return new FoodSet(result, totalCost);
      }
 
      public static ArrayList<Food> buildMenu(String[] names, int[] values, int[] calories){
@@ -34,7 +57,7 @@ public class Controller {
           return menu;
      }
 
-     private class FoodSet{
+     private static class FoodSet{
           private ArrayList<Food> food;
           private float totalValue;
           public FoodSet(ArrayList<Food> list, float totalValue){
@@ -48,10 +71,28 @@ public class Controller {
      }
 }
 
+/*
+Constructor Class
+ */
 class Food{
      private String name;
      private int value;
      private int calories;
+     public Food(){
+          this.name = "";
+          this.value = 0;
+          this.calories = 0;
+     }
+     public Food(String name){
+          this.name = name;
+          this.value = 0;
+          this.calories = 0;
+     }
+     public Food(String name, int value) {
+          this.name = name;
+          this.value = value;
+          this.calories = 0;
+     }
      public Food(String n, int v, int c){
           this.name = n;
           this.value = v;
@@ -72,4 +113,3 @@ class Food{
           return this.name + "; Value: " + Integer.toString(this.value) + "; Calories: " + Integer.toString(this.calories);
      }
 }
-
